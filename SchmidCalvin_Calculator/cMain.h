@@ -5,6 +5,8 @@ class cMain : public wxFrame
 {
 public:
 	cMain();
+	void OnButtonClick(wxCommandEvent& evt);
+	void BindButton(wxButton* btn);
 private:
 	wxButton* btn1 = nullptr;
 	wxButton* btn2 = nullptr;
@@ -28,4 +30,6 @@ private:
 	wxButton* btnNeg = nullptr;
 	wxButton* btnDecimal = nullptr;
 	wxTextCtrl* txtBox = nullptr;
+
+	wxDECLARE_EVENT_TABLE();
 };
