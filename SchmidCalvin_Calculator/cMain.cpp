@@ -1,12 +1,17 @@
 #include "cMain.h"
+#include "Factory.h"
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 EVT_BUTTON(10000, OnButtonClick)
 wxEND_EVENT_TABLE()
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Calculator", wxPoint(20, 20), wxSize(370, 400)) {
+
+	Factory fact;
+
 	//First row (7/8/22)
-	btnNeg = new wxButton(this, 10010, "Neg(-)", wxPoint(270, 15), wxSize(70, 30));
+	btnNeg = fact.createButton(this, 10010, "Neg(-)", 270, 15, 70, 10);
+	//btnNeg = new wxButton(this, 10010, "Neg(-)", wxPoint(270, 15), wxSize(70, 30));
 	txtBox = new wxTextCtrl(this, wxID_ANY, "", wxPoint(15, 17), wxSize(240, 25));
 
 	//Second row (7/8/22)
@@ -41,7 +46,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Calculator", wxPoint(20, 20), wxSiz
 	btnAdd = new wxButton(this, 10020, "+", wxPoint(270, 300), wxSize(70, 50));
 
 	//Bind all the buttons to the event table
-	BindButton(btn1);
+	/*BindButton(btn1);
 	BindButton(btn2);
 	BindButton(btn3);
 	BindButton(btn4);
@@ -61,7 +66,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Calculator", wxPoint(20, 20), wxSiz
 	BindButton(btnBin);
 	BindButton(btnHex);
 	BindButton(btnMod);
-	BindButton(btnNeg);
+	BindButton(btnNeg);*/
 }
 
 //Function to handle button presses (7/11/22)
@@ -71,7 +76,6 @@ void cMain::OnButtonClick(wxCommandEvent& evt) {
 	txtBox->AppendText(btn->GetLabel());
 }
 
-//Function to bind the buttons to the event table (7/11/22)
 void cMain::BindButton(wxButton* btn) {
 	btn->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnButtonClick, this);
 }

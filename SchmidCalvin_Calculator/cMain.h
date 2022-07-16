@@ -1,8 +1,10 @@
 #pragma once
 #include "wx/wx.h"
 
+
 class cMain : public wxFrame
 {
+
 public:
 	cMain();
 	void OnButtonClick(wxCommandEvent& evt);
