@@ -1,5 +1,6 @@
 #include "cMain.h"
 #include "Factory.h"
+#include "Processor.h"
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 EVT_BUTTON(10000, OnButtonClick)
@@ -35,21 +36,22 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Calculator", wxPoint(20, 20), wxSiz
 	btn1 = fact.createButton(this, 10001, "1", 15, 240);
 	btn2 = fact.createButton(this, 10002, "2", 100, 240);
 	btn3 = fact.createButton(this, 10003, "3", 185, 240);
-	btnSub = fact.createButton(this, 10004, "-", 270, 240);
+	btnSub = fact.createButton(this, 10017, "-", 270, 240);
 
 
 	//Bottom row (7/8/22)
 	btnEquals = fact.createButton(this, 10018, "=", 15, 300);
 	btn0 = fact.createButton(this, 10000, "0", 100, 300);
-	btnDecimal = fact.createButton(this, 10019, "Hex", 185, 300);
+	btnDecimal = fact.createButton(this, 10019, ".", 185, 300);
 	btnAdd = fact.createButton(this, 10020, "+", 270, 300);
 }
 
 //Function to handle button presses (7/11/22)
 void cMain::OnButtonClick(wxCommandEvent& evt) {
 	//Casts the event object as a button so the label can be retrived (7/11/22)
+	Processor* process = Processor::GetInstance();
 	wxButton* btn = static_cast<wxButton*>(evt.GetEventObject());
-	txtBox->AppendText(btn->GetLabel());
+	process->ProcessButton(btn, txtBox);;
 }
 
 void cMain::BindButton(wxButton* btn) {
