@@ -1,17 +1,25 @@
 #pragma once
 #include "wx/wx.h"
+#include "Command.h"
+#include "Addition.h"
+#include "Subtraction.h"
+#include "Multiply.h"
+#include "Division.h"
+#include "Mod.h"
+#include "Calculator.h"
 #include <vector>
 
 class Processor
 {
 private:
 	static Processor* _processor;
-	Processor() {}
-	enum Operations {None, Plus, Minus, Multiply, Divide, Mod};
-	float line = NULL;
-	float line2 = NULL;
-	float outcome;
-	Operations operation = None;
+	bool firstLine;
+	std::vector<Command*> _queue;
+	Calculator* _calc;
+	Processor() {
+		_calc = new Calculator();
+		firstLine = true;
+	}
 public:
 	//Create the method to get the singleton instance (7/19/22)
 	static Processor* GetInstance() {
@@ -43,38 +51,28 @@ public:
 		//Record the number entered in a float variable and update it (7/20/22)
 		if (ID >= 10000 && ID < 10010) {
 			textbox->AppendText(btn->GetLabel());
-			if(operation == None)
-				line = wxStringToFloat(textbox->GetLineText(0));
-			else
-				line2 = wxStringToFloat(textbox->GetLineText(0));
+			_calc->setLine(wxStringToFloat(textbox->GetLineText(0)));
 		}
 		else {  //If the button wasn't a number, process the corresponding opperation (7/19/22)
 			switch (ID) {
 
 			case 10010: { //Negative
-				if (operation == None) {
-					line = 0 - line;
-					textbox->Clear();
-					textbox->AppendText(wxString::Format(wxT("%g"), line));
-				}
-				else {
-					line2 = 0 - line2;
-					textbox->Clear();
-					textbox->AppendText(wxString::Format(wxT("%g"), line2));
-				}
+				_calc->setLine(0 - _calc->getLine());
+				textbox->Clear();
+				textbox->AppendText(wxString::Format(wxT("%g"), _calc->getLine()));
 				break;
 			}
 			case 10011: {//Clear
 				//Clears the text box, and resets the numbers for the calculation
 				textbox->Clear();
-				line = NULL;
-				operation = None;
+				_calc->setLine(0);
+				firstLine = true;
 				break;
 			}
 			case 10012: {//Binary
-				if (operation == None) {
+				if (firstLine) {
 					std::string binary = "";
-					int number = (int)line;
+					int number = (int)_calc->getLine();
 
 					for (int i = 0; i < 32; i++) {
 						if (number % 2 == 0)
@@ -88,14 +86,14 @@ public:
 					wxString display(binary.c_str(), wxConvUTF8);
 					textbox->Clear();
 					textbox->AppendText(display);
-					line = NULL;
+					_calc->setLine(0);
 				}
 				break;
 			}
 			case 10013: {//Hexidecimal
-				if (operation == None) {
+				if (firstLine) {
 					std::string hex = "";
-					int number = (int)line;
+					int number = (int)_calc->getLine();
 
 					while (number > 0) {
 						int mod = number % 16;
@@ -134,47 +132,50 @@ public:
 					wxString display(hex.c_str(), wxConvUTF8);
 					textbox->Clear();
 					textbox->AppendText(hex);
-					line = NULL;
+					_calc->setLine(0);
 				}
 				break;
 			}
 			case 10014: {//Mod
-				if (operation == None) {
-					operation = Mod;
+				if (firstLine) {
+					Mod* mod = new Mod(_calc->getLine(), _calc);
+					_queue.push_back(mod);
 					textbox->Clear();
+					firstLine = false;
 				}
 				break;
 			}
 			case 10015: {//Divide
-				if (operation == None) {
-					operation = Divide;
+				if (firstLine) {
+					Division* div = new Division(_calc->getLine(), _calc);
+					_queue.push_back(div);
 					textbox->Clear();
+					firstLine = false;
 				}
 				break;
 			}
 			case 10016: {//Multiply
-				if (operation == None) {
-					operation = Multiply;
+				if (firstLine) {
+					Multiply* multi = new Multiply(_calc->getLine(), _calc);
+					_queue.push_back(multi);
 					textbox->Clear();
+					firstLine = false;
 				}
-				break;
 			}
 			case 10017: {//Subtract
-				if (operation == None) {
-					operation = Minus;
+				if (firstLine) {
+					Subtraction* sub = new Subtraction(_calc->getLine(), _calc);
+					_queue.push_back(sub);
 					textbox->Clear();
+					firstLine = false;
 				}
 				break;
 			}
 			case 10018: {//Equals
-				outcome = Calculate(line, line2, operation);
+				Calculate();
 
 				textbox->Clear();
-				textbox->AppendText(wxString::Format(wxT("%f"), outcome));
-
-				line = outcome;
-				line2 = NULL;
-				operation = None;
+				textbox->AppendText(wxString::Format(wxT("%f"), _calc->getAnswer()));
 				break;
 			}
 			case 10019: {//Decimal
@@ -182,9 +183,11 @@ public:
 				break;
 			}
 			case 10020: {//Add
-				if (operation == None) {
-					operation = Plus;
+				if (firstLine) {
+					Addition* add = new Addition(_calc->getLine(), _calc);
+					_queue.push_back(add);
 					textbox->Clear();
+					firstLine = false;
 				}
 				break;
 			}
@@ -192,31 +195,12 @@ public:
 		}
 	}
 
-	//Calculate a math equation made from a string
-	float Calculate(float line1, float line2, Operations operation){
-
-		float output = 0;
-
-		switch (operation)
-		{
-		case Plus:
-			output = line1 + line2;
-			break;
-		case Minus:
-			output = line1 - line2;
-			break;
-		case Multiply:
-			output = line1 * line2;
-			break;
-		case Divide:
-			output = line1 / line2;
-			break;
-		case Mod:
-			output = (int) line1 % (int) line2;
-			break;
+	//Run through the command queue (7/22/22)
+	void Calculate(){
+		for (int i = 0; i < _queue.size(); i++) {
+			_queue[i]->Execute();
 		}
-
-		return output;
+		_queue.clear();
 	}
 };
 
