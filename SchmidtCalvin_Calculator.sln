@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SchmidCalvin_Calculator", "SchmidCalvin_Calculator\SchmidCalvin_Calculator.vcxproj", "{17562EFF-1123-471D-8BBF-D7E991DD88AB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SchmidtCalvin_Calculator", "SchmidCalvin_Calculator\SchmidCalvin_Calculator.vcxproj", "{17562EFF-1123-471D-8BBF-D7E991DD88AB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SchmidtCalvin_CalculatorTests", "SchmidtCalvin_CalculatorTests\SchmidtCalvin_CalculatorTests.vcxproj", "{A9AE9D4F-170C-407C-A15B-9E122094CDD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{17562EFF-1123-471D-8BBF-D7E991DD88AB}.Release|x64.Build.0 = Release|x64
 		{17562EFF-1123-471D-8BBF-D7E991DD88AB}.Release|x86.ActiveCfg = Release|Win32
 		{17562EFF-1123-471D-8BBF-D7E991DD88AB}.Release|x86.Build.0 = Release|Win32
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Debug|x64.ActiveCfg = Debug|x64
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Debug|x64.Build.0 = Debug|x64
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Debug|x86.ActiveCfg = Debug|Win32
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Debug|x86.Build.0 = Debug|Win32
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Release|x64.ActiveCfg = Release|x64
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Release|x64.Build.0 = Release|x64
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Release|x86.ActiveCfg = Release|Win32
+		{A9AE9D4F-170C-407C-A15B-9E122094CDD5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

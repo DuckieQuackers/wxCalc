@@ -42,6 +42,11 @@ public:
 		return output;
 	}
 
+	//Returns the calculator being used
+	Calculator* getCalc() {
+		return _calc;
+	}
+
 	//Process the button commands
 	void ProcessButton(wxButton* btn, wxTextCtrl* textbox) {
 		//Get the button ID for future refrence (7/19/22)
@@ -71,17 +76,7 @@ public:
 			}
 			case 10012: {//Binary
 				if (firstLine) {
-					std::string binary = "";
-					int number = (int)_calc->getLine();
-
-					for (int i = 0; i < 32; i++) {
-						if (number % 2 == 0)
-							binary = "0" + binary;
-						else
-							binary = "1" + binary;
-
-						number /= 2;
-					}
+					std::string binary = Binary(_calc->getLine());
 
 					wxString display(binary.c_str(), wxConvUTF8);
 					textbox->Clear();
@@ -92,42 +87,7 @@ public:
 			}
 			case 10013: {//Hexidecimal
 				if (firstLine) {
-					std::string hex = "";
-					int number = (int)_calc->getLine();
-
-					while (number > 0) {
-						int mod = number % 16;
-						if (mod < 10) {
-							hex = std::to_string(mod) + hex;
-						}
-						else {
-							switch (mod)
-							{
-							case 10:
-								hex = "A" + hex;
-								break;
-							case 11:
-								hex = "B" + hex;
-								break;
-							case 12:
-								hex = "C" + hex;
-								break;
-							case 13:
-								hex = "D" + hex;
-								break;
-							case 14:
-								hex = "E" + hex;
-								break;
-							case 15:
-								hex = "F" + hex;
-								break;
-							}
-						}
-
-						number /= 16;
-					}
-
-					hex = "0x" + hex;
+					std::string hex = Hexidecimal(_calc->getLine());
 
 					wxString display(hex.c_str(), wxConvUTF8);
 					textbox->Clear();
@@ -138,8 +98,7 @@ public:
 			}
 			case 10014: {//Mod
 				if (firstLine) {
-					Mod* mod = new Mod(_calc->getLine(), _calc);
-					_queue.push_back(mod);
+					mod(_calc->getLine());
 					textbox->Clear();
 					firstLine = false;
 				}
@@ -147,8 +106,7 @@ public:
 			}
 			case 10015: {//Divide
 				if (firstLine) {
-					Division* div = new Division(_calc->getLine(), _calc);
-					_queue.push_back(div);
+					Divide(_calc->getLine());
 					textbox->Clear();
 					firstLine = false;
 				}
@@ -156,26 +114,24 @@ public:
 			}
 			case 10016: {//Multiply
 				if (firstLine) {
-					Multiply* multi = new Multiply(_calc->getLine(), _calc);
-					_queue.push_back(multi);
+					Multi(_calc->getLine());
 					textbox->Clear();
 					firstLine = false;
 				}
 			}
-			case 10017: {//Subtract
+			case 10017: {//Subtraction
 				if (firstLine) {
-					Subtraction* sub = new Subtraction(_calc->getLine(), _calc);
-					_queue.push_back(sub);
+					Sub(_calc->getLine());
 					textbox->Clear();
 					firstLine = false;
 				}
 				break;
-			}
+			} 
 			case 10018: {//Equals
-				Calculate();
+				float answer = Calculate();
 
 				textbox->Clear();
-				textbox->AppendText(wxString::Format(wxT("%f"), _calc->getAnswer()));
+				textbox->AppendText(wxString::Format(wxT("%f"), answer));
 				break;
 			}
 			case 10019: {//Decimal
@@ -184,8 +140,7 @@ public:
 			}
 			case 10020: {//Add
 				if (firstLine) {
-					Addition* add = new Addition(_calc->getLine(), _calc);
-					_queue.push_back(add);
+					Add(_calc->getLine());
 					textbox->Clear();
 					firstLine = false;
 				}
@@ -196,11 +151,99 @@ public:
 	}
 
 	//Run through the command queue (7/22/22)
-	void Calculate(){
+	float Calculate(){
 		for (int i = 0; i < _queue.size(); i++) {
 			_queue[i]->Execute();
 		}
 		_queue.clear();
+
+		return _calc->getAnswer();
+	}
+
+	//Adding methods so the tests can be run easier without having to mess with wxWidgets objects or the calculator class
+	void Add(float value) {
+		Addition* add = new Addition(value, _calc);
+		_queue.push_back(add);
+	}
+
+	void Sub(float value) {
+		Subtraction* sub = new Subtraction(_calc->getLine(), _calc);
+		_queue.push_back(sub);
+	}
+
+	void Multi(float value) {
+		Multiply* multi = new Multiply(_calc->getLine(), _calc);
+		_queue.push_back(multi);
+	}
+
+	void Divide(float value) {
+		Division* div = new Division(_calc->getLine(), _calc);
+		_queue.push_back(div);
+	}
+
+	void mod(float value){
+		Mod* mod = new Mod(_calc->getLine(), _calc);
+		_queue.push_back(mod);
+	}
+
+	std::string Binary(float value) {
+		std::string binary = "";
+		int number = (int)_calc->getLine();
+
+		for (int i = 0; i < 32; i++) {
+			if (number % 2 == 0)
+				binary = "0" + binary;
+			else
+				binary = "1" + binary;
+
+			number /= 2;
+		}
+
+		return binary;
+	}
+
+	std::string Hexidecimal(float value) {
+		std::string hex = "";
+		int number = (int)_calc->getLine();
+
+		while (number > 0) {
+			int mod = number % 16;
+			if (mod < 10) {
+				hex = std::to_string(mod) + hex;
+			}
+			else {
+				switch (mod)
+				{
+				case 10:
+					hex = "A" + hex;
+					break;
+				case 11:
+					hex = "B" + hex;
+					break;
+				case 12:
+					hex = "C" + hex;
+					break;
+				case 13:
+					hex = "D" + hex;
+					break;
+				case 14:
+					hex = "E" + hex;
+					break;
+				case 15:
+					hex = "F" + hex;
+					break;
+				}
+			}
+
+			number /= 16;
+		}
+
+		hex = "0x" + hex;
+		return hex;
+	}
+
+	void setCalcLine(float value) {
+		_calc->setLine(value);
 	}
 };
 

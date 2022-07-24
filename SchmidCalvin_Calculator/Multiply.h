@@ -5,7 +5,7 @@
 class Multiply : public Command
 {
 private:
-	float _line = 0;
+	float _line;
 	Calculator* _calc = nullptr;
 public:
 	Multiply(float input, Calculator* calc) {
